@@ -1,0 +1,22 @@
+$kind: http-request
+url: http://localhost:5000/api/files/upload
+method: POST
+body:
+  type: formdata
+  content:
+    - type: text
+      key: fileName
+      value: res
+      description: ""
+      disabled: false
+    - type: file
+      key: file
+      src:
+        - postman-cloud:///1f1d03dd-ab9d-43f0-ad04-0255f0ec8d1f
+      description: ""
+      disabled: false
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_06bz}}"
+order: 1000
