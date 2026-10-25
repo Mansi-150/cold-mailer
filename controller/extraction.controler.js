@@ -1,6 +1,5 @@
-import Extraction from '../model/extraction.model.js';
-import { extractWithNvidia } from '../utils/ai.utils.js';
-
+import Extraction from "../model/extraction.model.js";
+import { extractWithNvidia } from "../utils/ai.utlis.js";
 export const extractContent = async(req, res)=>{
     try {
         if(!req.file){
@@ -35,34 +34,32 @@ Do not invent or guess information.`
 
         const extractContentWithAi = await extractWithNvidia(prompt, imageData);
 
-        let parsedData = null;
-        try {
+        let parseData = null;
+
+        try{
             const jsonMatch = extractContentWithAi.match(/\{[\s\S]*\}/);
             const toParse = jsonMatch ? jsonMatch[0] : extractContentWithAi;
-            parsedData = JSON.parse(toParse)
-        } catch (error) {
-            console.log("Error while parsing : ",error.message);
-            parsedData = {rawContent: extractContentWithAi}
+            parseData = JSON.parse(toParse)
+        } catch(error) {
+            console.log("Error while parsing :", error.message)
+            parseData = {rawContent: extractContentWithAi}
+
         }
-
         const savedExtraction = await Extraction.create({
-            data: parsedData,
-            rawContent: extractContentWithAi,
-            createdBy: req.user._id
+            data : parseData,
+            rawContent : extractContentWithAi,
+            createdBy : req.user._id
         })
-
         return res.status(200).json({
-            success: true,
-            msg: "Extraction Success...",
-            savedExtraction
+            success : true,
+            message : "Content extracted successfully",
+            data : savedExtraction
         })
-
-
     } catch (error) {
-        console.error("Extraction Error: ", error);
+        console.error("extraction Error",error);
         return res.status(500).json({
             success: false,
-            msg: "Internal Server Error..."
+            message: "Error occurred while extracting content"
         })
     }
 }
